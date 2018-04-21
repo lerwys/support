@@ -175,7 +175,7 @@ if [[ $XXX ]];           then   get_repo epics-modules  xxx            XXX      
 
 #Blow away iocStats existing RELEASE file until SUPPORT is ever defined
 if [[ $DEVIOCSTATS ]];   then
-cd iocStats-$DEVIOCSTATS
+cd iocStats-${DEVIOCSTATS//./-}
 cd configure
 echo "EPICS_BASE=." >> RELEASE
 echo "SUPPORT=." >> RELEASE
