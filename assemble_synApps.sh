@@ -239,6 +239,9 @@ echo "EPICS_BASE=$EPICS_BASE" >> RELEASE_BASE.local
 cp EXAMPLE_RELEASE_PRODS.local RELEASE_PRODS.local
 cp EXAMPLE_RELEASE_LIBS.local RELEASE_LIBS.local
 
+# Create missing RELEASE_PATHS.local
+echo "" >> RELEASE_PATHS.local
+
 cd ../..
 
 echo 'ADCORE=$(AREA_DETECTOR)/ADCore' >> ./configure/RELEASE
