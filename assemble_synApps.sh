@@ -5,9 +5,9 @@ set -exo pipefail
 EPICS_BASE=/opt/epics/base
 
 SUPPORT=master
-CONFIGURE=synApps_5_8
-UTILS=synApps_5_8
-DOCUMENTATION=synApps_5_8
+CONFIGURE=master
+UTILS=master
+DOCUMENTATION=master
 
 ALLENBRADLEY=2.3
 ALIVE=master
