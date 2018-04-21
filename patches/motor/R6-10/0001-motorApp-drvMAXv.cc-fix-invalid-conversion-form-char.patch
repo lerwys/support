@@ -1,0 +1,184 @@
+From a8e8cd04333b66576d40a78799c114d1451ad1c9 Mon Sep 17 00:00:00 2001
+From: Lucas Russo <lerwys@gmail.com>
+Date: Sat, 21 Apr 2018 11:46:57 -0300
+Subject: [PATCH] motorApp/*/drvMAXv.cc: fix invalid conversion form char to
+ char *
+
+gcc7 complains about invalid conversion, as -fpermissive
+flag is set by default.
+---
+ motorApp/OmsSrc/drvMAXv.cc | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/motorApp/OmsSrc/drvMAXv.cc b/motorApp/OmsSrc/drvMAXv.cc
+index fe6bafb..407fc3a 100644
+--- a/motorApp/OmsSrc/drvMAXv.cc
++++ b/motorApp/OmsSrc/drvMAXv.cc
+@@ -390,7 +390,7 @@ static int set_status(int card, int signal)
+     MAXvCntrl = (struct MAXvController *) brdptr->DevicePrivate;
+     if (MAXvCntrl->fwver >= 1.33)
+     {
+-        send_recv_mess(card, "#WS", (char) NULL, q_buf, 1);
++        send_recv_mess(card, "#WS", (char *) NULL, q_buf, 1);
+         if (strcmp(q_buf, "=0") != 0)
+         {
+             errlogPrintf(wdctrmsg, card, q_buf);
+@@ -551,7 +551,7 @@ static int set_status(int card, int signal)
+ 
+                 if (strncmp(buffer, "@PUT(", 5) != 0)
+                     goto errorexit;
+-                
++
+                 /* Point "start" to PV name argument. */
+                 tail = NULL;
+                 start = epicsStrtok_r(&buffer[5], ",", &tail);
+@@ -703,7 +703,7 @@ static RTN_STATUS send_mess(int card, char const *com, char *name)
+ #endif
+         epicsThreadSleep(epicsThreadSleepQuantum());
+     };
+-    
++
+     if (count >= 1000)
+     {
+         errlogPrintf("\n*** MAXv card #%d communication timeout ***\n", card);
+@@ -718,9 +718,9 @@ static RTN_STATUS send_mess(int card, char const *com, char *name)
+  * FUNCTION... recv_mess(int card, char *com, int amount)
+  *
+  * INPUT ARGUMENTS...
+- *      card - 
++ *      card -
+  *      *com -
+- *      amount - 
++ *      amount -
+  *
+  * LOGIC...
+  *  IF controller card does not exist.
+@@ -738,11 +738,11 @@ static RTN_STATUS send_mess(int card, char const *com, char *name)
+  *      Initialize local buffer "get" index.
+  *      FOR
+  *          IF characters left in controller's input buffer.
+- *              
++ *
+  *          ENDIF
+  *      ENDFOR
+  *  ENDFOR
+- *  
++ *
+  */
+ static int recv_mess(int card, char *com, int amount)
+ {
+@@ -823,11 +823,11 @@ static char *readbuf(volatile struct MAXv_motor *pmotor, char *bufptr)
+     epicsUInt32 getIndex, putIndex;
+     int bufsize;
+     char *start, *end, *bufend;
+-    
++
+     getIndex = pmotor->inGetIndex;
+     putIndex = pmotor->inPutIndex;
+     bufsize  = putIndex - getIndex;
+-    
++
+     start  = (char *) &pmotor->inBuffer[getIndex];
+     end    = (char *) &pmotor->inBuffer[putIndex];
+ 
+@@ -835,9 +835,9 @@ static char *readbuf(volatile struct MAXv_motor *pmotor, char *bufptr)
+         memcpy(bufptr, start, bufsize);
+     else if (start == end) /* Test for empty input buffer. */
+     {
+-        static char emptymsg[] = 
++        static char emptymsg[] =
+         "MAXv DPRAM input buffer empty; inGetIndex = %d inPutIndex = %d\n";
+- 
++
+         errlogPrintf(emptymsg, getIndex, putIndex);
+         return(bufptr);
+     }
+@@ -860,11 +860,11 @@ static char *readbuf(volatile struct MAXv_motor *pmotor, char *bufptr)
+             memcpy((bufptr + size), (const char *) &pmotor->inBuffer[0], (bufsize - size));
+         }
+     }
+-    
++
+     getIndex += bufsize;
+     if (getIndex >= BUFFER_SIZE)
+         getIndex -= BUFFER_SIZE;
+-    
++
+     bufptr += (bufsize - 1);
+     *bufptr = (char) NULL;
+ 
+@@ -1004,7 +1004,7 @@ MAXvSetup(int num_cards,        /* maximum number of cards in rack */
+ 
+     quantum = epicsThreadSleepQuantum();
+     frequency = 1.0 / quantum;
+-    
++
+     /* Set motor polling task rate */
+     if (scan_rate >= 1 && scan_rate <= frequency)
+         targs.motor_scan_rate = scan_rate;
+@@ -1038,7 +1038,7 @@ RTN_VALUES MAXvConfig(int card,                 /* number of card being configur
+         epicsThreadSleep(5.0);
+         return(ERROR);
+     }
+-    
++
+     if (strlen(initstr) > INITSTR_SIZE)
+     {
+         errlogPrintf("\n*** MAXvConfig ERROR ***\n");
+@@ -1047,7 +1047,7 @@ RTN_VALUES MAXvConfig(int card,                 /* number of card being configur
+         return(ERROR);
+     }
+     strcpy(initstring[card], initstr);
+-    
++
+     /* Save absolute encoder and grey code configuation flags */
+     configurationFlags[card]  = AbsConfig;
+     greycodeConfigFlags[card] = GreyConfig;
+@@ -1231,7 +1231,7 @@ static int motor_init()
+ 
+         Debug(9, "motor_init: localaddr = %p\n", localaddr);
+         pmotor = (struct MAXv_motor *) localaddr;
+-            
++
+         if (pmotor->firmware_status.Bits.running == 0)
+         {
+             errlogPrintf(norunmsg, card_index, (unsigned int) pmotor->firmware_status.All);
+@@ -1264,7 +1264,7 @@ static int motor_init()
+         send_mess(card_index, ERROR_CLEAR, (char*) NULL);
+         send_mess(card_index, STOP_ALL, (char*) NULL);
+ 
+-        rtn_code = send_recv_mess(card_index, GET_IDENT, (char) NULL, (char *) pmotorState->ident, 1);
++        rtn_code = send_recv_mess(card_index, GET_IDENT, (char *) NULL, (char *) pmotorState->ident, 1);
+         if (rtn_code != 0)
+         {
+             errlogPrintf("\n***MAXv card #%d Disabled*** not responding to commands!\n\n", card_index);
+@@ -1281,7 +1281,7 @@ static int motor_init()
+ 
+         if (pvtdata->fwver >= 1.33)
+         {
+-            send_recv_mess(card_index, "#WS", (char) NULL, axis_pos, 1);
++            send_recv_mess(card_index, "#WS", (char *) NULL, axis_pos, 1);
+             if (strcmp(axis_pos, "=0") != 0)
+             {
+                 errlogPrintf(wdctrmsg, card_index, axis_pos);
+@@ -1295,7 +1295,7 @@ static int motor_init()
+         {
+             send_mess(card_index, initstring[card_index], (char*) NULL);
+ 
+-            send_recv_mess(card_index, ALL_POS, (char) NULL, axis_pos, 1);
++            send_recv_mess(card_index, ALL_POS, (char *) NULL, axis_pos, 1);
+ 
+             for (total_axis = 0, pos_ptr = epicsStrtok_r(axis_pos, ",", &tok_save);
+                  pos_ptr; pos_ptr = epicsStrtok_r(NULL, ",", &tok_save), total_axis++)
+@@ -1330,7 +1330,7 @@ static int motor_init()
+                     motor_info->encoder_present = YES;
+                     recv_mess(card_index, encoder_pos, 1);
+                 }
+-                
++
+                 /* Test if motor has PID parameters. */
+                 send_mess(card_index, PID_QUERY, (char *) MAXv_axis[motor_index]);
+                 while (!pmotor->status1_flag.Bits.done) /* Wait for command to complete. */
+-- 
+2.14.3
+

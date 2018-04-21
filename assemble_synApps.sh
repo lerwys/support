@@ -293,4 +293,22 @@ echo 'ETHERIP=$(SUPPORT)/ether_ip-2-26' >> ./configure/RELEASE
 fi
 
 
+if [[ $MOTOR ]]
+then
+
+    case $MOTOR in
+        # For now, apply patches only for R6-10
+        "R6-10")
+            cd motor-$MOTOR
+            git am --ignore-whitespace ${SCRIPTPATH}/patches/motor/$MOTOR/*
+            cd ../
+            ;;
+        *)
+            echo "Not patching motor-$MOTOR" >&2
+            ;;
+    esac
+
+fi
+
+
 make release
