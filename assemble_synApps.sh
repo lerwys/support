@@ -2,7 +2,7 @@
 shopt -s expand_aliases
 set -exo pipefail
 
-EPICS_BASE=/APSshare/epics/base-3.15.5
+EPICS_BASE=/opt/epics/base
 
 SUPPORT=master
 CONFIGURE=synApps_5_8
