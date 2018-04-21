@@ -2,6 +2,8 @@
 shopt -s expand_aliases
 set -exo pipefail
 
+SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
+
 EPICS_BASE=/opt/epics/base
 
 SUPPORT=master
