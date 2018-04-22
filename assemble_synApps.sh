@@ -56,17 +56,17 @@ shallow_repo()
 	MODULE_NAME=$2
 	RELEASE_NAME=$3
 	TAG=$4
-	
+
 	FOLDER_NAME=$MODULE_NAME-${TAG//./-}
-	
+
 	echo
 	echo "Grabbing $MODULE_NAME at tag: $TAG"
 	echo
-	
+
 	git clone -q --branch $TAG --depth 1 https://github.com/$PROJECT/$MODULE_NAME.git $FOLDER_NAME
-	
+
 	echo "$RELEASE_NAME=\$(SUPPORT)/$FOLDER_NAME" >> ./configure/RELEASE
-	
+
 	echo
 }
 
@@ -76,22 +76,22 @@ full_repo()
 	MODULE_NAME=$2
 	RELEASE_NAME=$3
 	TAG=$4
-	
+
 	FOLDER_NAME=$MODULE_NAME-${TAG//./-}
-	
+
 	echo
 	echo "Grabbing $MODULE_NAME at tag: $TAG"
 	echo
-	
+
 	git clone -q https://github.com/$PROJECT/$MODULE_NAME.git $FOLDER_NAME
-	
+
 	CURR=$(pwd)
-	
+
 	cd $FOLDER_NAME
 	git checkout -q $TAG
 	cd "$CURR"
 	echo "$RELEASE_NAME=\$(SUPPORT)/$FOLDER_NAME" >> ./configure/RELEASE
-	
+
 	echo
 }
 
@@ -201,7 +201,7 @@ fi
 
 
 if [[ $AREA_DETECTOR ]]
-then 
+then
 
 get_repo  areaDetector  areaDetector  AREA_DETECTOR  $AREA_DETECTOR
 
