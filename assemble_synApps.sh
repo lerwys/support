@@ -237,12 +237,14 @@ echo '-include $(TOP)/configure/RELEASE.local.$(EPICS_HOST_ARCH)' >> RELEASE.loc
 echo "SUPPORT=$SUPPORT" >> RELEASE_SUPPORT.local
 echo "EPICS_BASE=$EPICS_BASE" >> RELEASE_BASE.local
 
+# Create missing RELEASE_PATHS.local
+echo "include \$(TOP)/configure/RELEASE_SUPPORT.local" >> RELEASE_PATHS.local
+echo "include \$(TOP)/configure/RELEASE_BASE.local" >> RELEASE_PATHS.local
+echo "AREA_DETECTOR=\$(SUPPORT)/areaDetector-${AREA_DETECTOR}" >> RELEASE_PATHS.local
+
 # make release will give the correct paths for these files, so we just need to rename them
 cp EXAMPLE_RELEASE_PRODS.local RELEASE_PRODS.local
 cp EXAMPLE_RELEASE_LIBS.local RELEASE_LIBS.local
-
-# Create missing RELEASE_PATHS.local
-echo "" >> RELEASE_PATHS.local
 
 cd ../..
 
