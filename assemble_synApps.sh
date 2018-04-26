@@ -313,4 +313,13 @@ then
 fi
 
 
+# For all modules, delete .git/ folder for space
+MODULES=$(find . -maxdepth 1 -type d -iname "*" -exec basename '{}' \; | sort)
+for mod in ${MODULES}; do
+    rm -rf ${mod}/.git
+done
+
+exit 0
+
+
 make release
