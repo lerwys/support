@@ -118,10 +118,14 @@ if [ "$1" == "full" ]; then
 	alias get_repo='full_repo'
 fi
 
+synApps_dir=$2
+if [ -z "$synApps_dir" ]; then
+    synApps_dir=synApps
+fi
 
 # Assume user has nothing but this file, just in case that's true.
-mkdir synApps
-cd synApps
+mkdir ${synApps_dir}
+cd ${synApps_dir}
 
 get_support support $SUPPORT
 cd support
