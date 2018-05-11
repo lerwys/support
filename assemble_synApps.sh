@@ -323,7 +323,6 @@ for mod in ${MODULES}; do
     rm -rf ${mod}/.git
 done
 
-exit 0
 
 
 make release
