@@ -34,6 +34,12 @@ define  MODULE_defined
   SUPPORT_DIRS  += $($(1))
   RELEASE_FILES += $($(1))/configure/RELEASE
   # areaDetector has differently named RELEASE files
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_BASE.local)
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_BASE.local.$(EPICS_HOST_ARCH))
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_BASE.$(EPICS_HOST_ARCH))
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_SUPPORT.local)
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_SUPPORT.local.$(EPICS_HOST_ARCH))
+  RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_SUPPORT.$(EPICS_HOST_ARCH))
   RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_PATHS.local)
   RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_PATHS.local.$(EPICS_HOST_ARCH))
   RELEASE_FILES += $(wildcard $($(1))/configure/RELEASE_PATHS.$(EPICS_HOST_ARCH))
@@ -127,10 +133,11 @@ $(QUADEM)_DEPEND_DIRS   = $(AREA_DETECTOR) $(ASYN) $(AUTOSAVE) $(BUSY) $(IPAC) $
 ################### 6th Tier Support Modules #####################
 # The conditional below should be a target arch, but those are not
 # defined at this level.
-MODULE_LIST = DXP
+MODULE_LIST = DXP DXPSITORO
 $(foreach mod, $(MODULE_LIST), $(eval $(call MODULE_defined,$(mod)) ))
 
 $(DXP)_DEPEND_DIRS = $(AREA_DETECTOR) $(ASYN) $(AUTOSAVE) $(BUSY) $(CALC) $(CAMAC) $(MCA) $(SNCSEQ) $(SSCAN)
+$(DXPSITORO)_DEPEND_DIRS = $(AREA_DETECTOR) $(ASYN) $(AUTOSAVE) $(BUSY) $(CALC) $(CAMAC) $(MCA) $(SNCSEQ) $(SSCAN)
 
 ################### End of Support-Modules #####################
 

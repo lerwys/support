@@ -6,46 +6,47 @@ SCRIPTPATH="$( cd "$( dirname "${BASH_SOURCE[0]}"  )" && pwd  )"
 
 EPICS_BASE=/opt/epics/base
 
-SUPPORT=master
-CONFIGURE=master
-UTILS=master
-DOCUMENTATION=master
+SUPPORT=R6-0
+CONFIGURE=R6-0
+UTILS=R6-0
+DOCUMENTATION=R6-0
 
 #ALLENBRADLEY=2.3
 ALIVE=R1-0-1
-AREA_DETECTOR=R3-2
+AREA_DETECTOR=R3-3-1
 ASYN=R4-33
 AUTOSAVE=R5-9
 BUSY=R1-7
-CALC=R3-7
+CALC=R3-7-1
 #CAMAC=master
-CAPUTRECORDER=R1-7
+CAPUTRECORDER=R1-7-1
 #DAC128V=R2-9
-DELAYGEN=R1-1-1
-#DXP=R4-0
+DELAYGEN=R1-2-0
+#DXP=R5-0
 DEVIOCSTATS=3.1.15
-IP=R2-19
+#GALIL=V3-6
+IP=R2-19-1
 IPAC=2.15
 #IP330=R2-9
 IPUNIDIG=R2-11
-#LOVE=master
-#LUA=master
+#LOVE=R3-2-6
+#LUA=R1-2-2
 MCA=R7-7
-#MEASCOMP=R2-0
-#MODBUS=R2-10-1
+#MEASCOMP=R2-1
+#MODBUS=R2-11
 MOTOR=R6-10-1
-OPTICS=R2-13
+OPTICS=R2-13-1
 QUADEM=R9-1
 SNCSEQ=2.2.6
-#SOFTGLUE=master
-#SOFTGLUEZYNQ=master
+#SOFTGLUE=R2-8-1
+#SOFTGLUEZYNQ=R2-0-1
 SSCAN=R2-11-1
-STD=R3-4
+STD=R3-5
 STREAM=R2-7-7
-#VAC=master
-#VME=master
-#YOKOGAWA_DAS=master
-#XXX=master
+#VAC=R1-7
+#VME=R2-9
+#YOKOGAWA_DAS=R1-0-0
+#XXX=R6-0
 
 
 
@@ -157,7 +158,9 @@ if [[ $CAPUTRECORDER ]]; then   get_repo epics-modules  caputRecorder  CAPUTRECO
 if [[ $DAC128V ]];       then   get_repo epics-modules  dac128V        DAC128V        $DAC128V       ; fi
 if [[ $DELAYGEN ]];      then   get_repo epics-modules  delaygen       DELAYGEN       $DELAYGEN      ; fi
 if [[ $DXP ]];           then   get_repo epics-modules  dxp            DXP            $DXP           ; fi
+if [[ $DXPSITORO ]];     then   get_repo epics-modules  dxpSITORO      DXPSITORO      $DXPSITORO     ; fi
 if [[ $DEVIOCSTATS ]];   then   get_repo epics-modules  iocStats       DEVIOCSTATS    $DEVIOCSTATS   ; fi
+if [[ $GALIL ]];         then   get_repo motorapp       Galil-3-0      GALIL          $GALIL         ; fi
 if [[ $IP ]];            then   get_repo epics-modules  ip             IP             $IP            ; fi
 if [[ $IPAC ]];          then   get_repo epics-modules  ipac           IPAC           $IPAC          ; fi
 if [[ $IP330 ]];         then   get_repo epics-modules  ip330          IP330          $IP330         ; fi
@@ -176,13 +179,14 @@ if [[ $SSCAN ]];         then   get_repo epics-modules  sscan          SSCAN    
 if [[ $STD ]];           then   get_repo epics-modules  std            STD            $STD           ; fi
 if [[ $VAC ]];           then   get_repo epics-modules  vac            VAC            $VAC           ; fi
 if [[ $VME ]];           then   get_repo epics-modules  vme            VME            $VME           ; fi
-if [[ $YOKOGAWA_DAS ]];  then   get_repo BCDA-APS       Yokogawa_MW100 YOKOGAWA_DAS   $YOKOGAWA_DAS  ; fi
+if [[ $YOKOGAWA_DAS ]];  then   get_repo epics-modules  Yokogawa_DAS   YOKOGAWA_DAS   $YOKOGAWA_DAS  ; fi
 if [[ $XXX ]];           then   get_repo epics-modules  xxx            XXX            $XXX           ; fi
 
 #Blow away iocStats existing RELEASE file until SUPPORT is ever defined
 if [[ $DEVIOCSTATS ]];   then
 cd iocStats-${DEVIOCSTATS//./-}
 cd configure
+rm -f RELEASE
 echo "EPICS_BASE=." >> RELEASE
 echo "SUPPORT=." >> RELEASE
 echo "SNCSEQ=." >> RELEASE
@@ -199,6 +203,13 @@ get_repo  epics-modules  stream  STREAM  $STREAM
 cd stream-$STREAM
 git submodule init
 git submodule update
+
+#Temporary patch until new version of StreamDevice is released
+if [[ $SSCAN ]]
+then
+sed -i 's/#PROD_LIBS += sscan/PROD_LIBS += sscan/g' StreamDevice/streamApp/Makefile
+fi
+
 cd ..
 
 fi
@@ -220,6 +231,9 @@ cp EXAMPLE_CONFIG_SITE.local CONFIG_SITE.local
 
 # Graphics Magick doesn't compile on vxWorks
 echo 'WITH_GRAPHICSMAGICK = NO' >> CONFIG_SITE.local.vxWorks
+echo 'WITH_HDF5 = NO' >> CONFIG_SITE.local.vxWorks
+echo 'WITH_BLOSC = NO' >> CONFIG_SITE.local.vxWorks
+echo 'WITH_NEXUS = NO' >> CONFIG_SITE.local.vxWorks
 
 # We are still using Epics v3
 echo 'WITH_PVA = NO' >> CONFIG_SITE.local.linux-x86_64
@@ -231,7 +245,9 @@ echo 'WITH_PVA = NO' >> CONFIG_SITE.local.windows-x64-static
 
 #HDF5 flag for windows
 echo 'HDF5_STATIC_BUILD=$(STATIC_BUILD)' >> CONFIG_SITE.local.win32-x86
+echo 'HDF5_STATIC_BUILD=$(STATIC_BUILD)' >> CONFIG_SITE.local.win32-x86-static
 echo 'HDF5_STATIC_BUILD=$(STATIC_BUILD)' >> CONFIG_SITE.local.windows-x64
+echo 'HDF5_STATIC_BUILD=$(STATIC_BUILD)' >> CONFIG_SITE.local.windows-x64-static
 
 #Can't just use default RELEASE.local because it has simDetector commented out
 echo 'ADSIMDETECTOR=$(AREA_DETECTOR)/ADSimDetector' >> RELEASE.local
@@ -315,6 +331,19 @@ then
     esac
 
 fi
+
+if [[ $GALIL ]]
+then
+
+mv Galil-3-0-$GALIL/3-6 galil-3-6
+rm -Rf Galil-3-0-$GALIL
+cp galil-3-6/config/GALILRELEASE galil-3-6/configure/RELEASE
+echo 'GALIL=$(SUPPORT)/galil-3-6' >> ./configure/RELEASE
+sed -i 's/MODULE_LIST[ ]*=[ ]*MEASCOMP/MODULE_LIST = MEASCOMP GALIL/g' Makefile
+sed -i '/\$(MEASCOMP)_DEPEND_DIRS/a \$(GALIL)_DEPEND_DIRS = \$(AUTOSAVE) \$(SNCSEQ) \$(SSCAN) \$(CALC) \$(ASYN) \$(BUSY) \$(MOTOR) \$(IPAC)' Makefile
+
+fi
+
 
 
 # For all modules, delete .git/ folder for space
