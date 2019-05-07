@@ -42,7 +42,7 @@ SNCSEQ=2.2.6
 #SOFTGLUEZYNQ=R2-0-1
 SSCAN=R2-11-1
 STD=R3-5
-STREAM=R2-7-7
+STREAM=2.8.8
 #VAC=R1-7
 #VME=R2-9
 #YOKOGAWA_DAS=R1-0-0
@@ -198,16 +198,14 @@ fi
 if [[ $STREAM ]]
 then
 
-get_repo  epics-modules  stream  STREAM  $STREAM
+get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM
 
-cd stream-$STREAM
-git submodule init
-git submodule update
+cd StreamDevice-${STREAM//./-}
 
 #Temporary patch until new version of StreamDevice is released
 if [[ $SSCAN ]]
 then
-sed -i 's/#PROD_LIBS += sscan/PROD_LIBS += sscan/g' StreamDevice/streamApp/Makefile
+sed -i 's/#PROD_LIBS += sscan/PROD_LIBS += sscan/g' streamApp/Makefile
 fi
 
 cd ..
