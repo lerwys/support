@@ -202,6 +202,13 @@ get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM
 
 cd StreamDevice-${STREAM//./-}
 
+rm -f configure/RELEASE
+echo "TEMPLATE_TOP=\$(EPICS_BASE)/templates/makeBaseApp/top" > configure/RELEASE
+echo "EPICS_BASE=." >> configure/RELEASE
+echo "SUPPORT=." >> configure/RELEASE
+echo "ASYN=." >> configure/RELEASE
+echo "CALC=." >> configure/RELEASE
+
 #Temporary patch until new version of StreamDevice is released
 if [[ $SSCAN ]]
 then
