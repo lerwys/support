@@ -200,6 +200,10 @@ then
 
 get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM
 
+mkdir stream-R${STREAM//./-}
+mv StreamDevice-${STREAM//./-} stream-R${STREAM//./-}/
+
+cd stream-R${STREAM//./-}
 cd StreamDevice-${STREAM//./-}
 
 rm -f configure/RELEASE
@@ -215,6 +219,7 @@ then
 sed -i 's/#PROD_LIBS += sscan/PROD_LIBS += sscan/g' streamApp/Makefile
 fi
 
+cd ..
 cd ..
 
 fi
