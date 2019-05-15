@@ -57,8 +57,11 @@ shallow_repo()
 	MODULE_NAME=$2
 	RELEASE_NAME=$3
 	TAG=$4
+	FOLDER_NAME=$5
 
-	FOLDER_NAME=$MODULE_NAME-${TAG//./-}
+	if [ -z "$FOLDER_NAME" ]; then
+	    FOLDER_NAME=$MODULE_NAME-${TAG//./-}
+	fi
 
 	echo
 	echo "Grabbing $MODULE_NAME at tag: $TAG"
@@ -77,8 +80,11 @@ full_repo()
 	MODULE_NAME=$2
 	RELEASE_NAME=$3
 	TAG=$4
+	FOLDER_NAME=$5
 
-	FOLDER_NAME=$MODULE_NAME-${TAG//./-}
+	if [ -z "$FOLDER_NAME" ]; then
+	    FOLDER_NAME=$MODULE_NAME-${TAG//./-}
+	fi
 
 	echo
 	echo "Grabbing $MODULE_NAME at tag: $TAG"
