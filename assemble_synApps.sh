@@ -210,6 +210,7 @@ get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM $STREAM_FOLDER
 
 cd $STREAM_FOLDER
 
+rm -f GNUmakefile
 rm -f configure/RELEASE
 echo "TEMPLATE_TOP=\$(EPICS_BASE)/templates/makeBaseApp/top" > configure/RELEASE
 echo "EPICS_BASE=." >> configure/RELEASE
