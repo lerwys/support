@@ -204,13 +204,11 @@ fi
 if [[ $STREAM ]]
 then
 
-get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM
+STREAM_FOLDER="stream-R${STREAM//./-}/StreamDevice-${STREAM//./-}"
 
-mkdir stream-R${STREAM//./-}
-mv StreamDevice-${STREAM//./-} stream-R${STREAM//./-}/
+get_repo  paulscherrerinstitute  StreamDevice  STREAM  $STREAM $STREAM_FOLDER
 
-cd stream-R${STREAM//./-}
-cd StreamDevice-${STREAM//./-}
+cd $STREAM_FOLDER
 
 rm -f configure/RELEASE
 echo "TEMPLATE_TOP=\$(EPICS_BASE)/templates/makeBaseApp/top" > configure/RELEASE
@@ -226,8 +224,7 @@ then
 sed -i 's/#PROD_LIBS += sscan/PROD_LIBS += sscan/g' streamApp/Makefile
 fi
 
-cd ..
-cd ..
+cd $SUPPORT
 
 fi
 
